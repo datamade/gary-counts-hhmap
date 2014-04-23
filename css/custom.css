@@ -1,0 +1,20 @@
+body {
+    margin: 0;
+    font-family:'Montserrat',sans-serif;
+}
+
+#map {
+    height: 100%;
+    width: 75%;
+    float: left;
+}
+
+#info {
+    height: 100%;
+    width: 25%;
+    float: left;
+}
+
+#info div {
+    padding: 10px;
+}
