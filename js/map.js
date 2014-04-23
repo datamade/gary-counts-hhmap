@@ -2,18 +2,52 @@
     var hardestHit;
     var councilCounts;
     var lastClicked;
+    var councolFeature;
     var map = L.map('map').fitBounds([[41.5204,-87.4381],[41.6278,-87.2198]]);
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/derekeder.hehblhbj/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
+    map.on('zoomend', function(e){
+        if (typeof hardestHit !== 'undefined'){
+            if (map.getZoom() >= 15 ){
+                hardestHit.setStyle({'weight': 0.5});
+                councilCounts.setStyle({'fillOpacity': 0})
+            } else {
+                hardestHit.setStyle({'weight': 0})
+                councilCounts.setStyle({'fillOpacity': 0.3})
+            }
+        }
+    });
+    var info = L.control({position: 'bottomleft'});
+    info.onAdd = function(map){
+        this._div = L.DomUtil.create('div', 'council-info');
+        return this._div;
+    }
+    info.update = function(councilFeature){
+        if (typeof councilFeature !== 'undefined'){
+            var blob = '<h3>' + councilFeature.properties['COUNCIL_NU'] + '</h3>';
+            blob += '<p><strong>Hardest Hit properties: </strong>' + councilFeature.properties['COUNT'] + '</p>';
+            $(this._div).html(blob);
+        } else {
+            $(this._div).empty();
+            info.removeFrom(map);
+        }
+    }
     $.when($.getJSON('data/hardest_hit.geojson'), $.getJSON('data/council_counts.geojson')).then(
         function(hardest_hit, council_counts){
-            L.geoJson(council_counts, {
+            councilCounts = L.geoJson(council_counts, {
                 style: styleCouncils,
                 onEachFeature: function(feature, layer){
                     layer.on('click', function(e){
-                      console.log(feature.properties)
+                        map.setZoomAround(e.latlng, 16);
                     });
+                    layer.on('mouseover', function(e){
+                        info.addTo(map);
+                        info.update(feature);
+                    });
+                    layer.on('mouseout', function(e){
+                        info.update();
+                    })
                 }
             }).addTo(map);
             hardestHit = L.geoJson(hardest_hit, {
@@ -25,17 +59,18 @@
     function styleCouncils(feature){
         var style = {
             "color": "#000",
+            "opacity": 0.5,
             "weight": 1,
-            "fillOpacity": 0.7,
+            "fillOpacity": 0.3,
         }
         if (feature.properties['COUNT'] < 90){
-            style['fillColor'] = "#bdd7e7"
+            style['fillColor'] = "#a6dba0"
         }
         if (feature.properties['COUNT'] > 90 && feature.properties['COUNT'] < 200){
-            style['fillColor'] = "#6baed6";
+            style['fillColor'] = "#5aae61";
         }
         if (feature.properties['COUNT'] > 200){
-            style['fillColor'] = "#2171b5";
+            style['fillColor'] = "#1b7837";
         }
         return style;
     }
@@ -43,9 +78,9 @@
       // Style based upon ??
         var style = {
           "color": "#000",
-          "weight": 0.5,
+          "weight": 0,
           "fillOpacity": 0.7,
-          "fillColor": "#3182bd"
+          "fillColor": "#c2a5cf"
         }
         return style;
     }
@@ -54,7 +89,7 @@
             if(typeof lastClicked !== 'undefined'){
                 hardestHit.resetStyle(lastClicked);
             }
-            e.target.setStyle({'fillColor':"#b2182b"});
+            e.target.setStyle({'fillColor':"#762a83"});
             $('#info').html(parcelInfo(feature.properties));
             map.fitBounds(e.target.getBounds());
             lastClicked = e.target;
