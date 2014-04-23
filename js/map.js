@@ -10,29 +10,13 @@
     map.on('zoomend', function(e){
         if (typeof hardestHit !== 'undefined'){
             if (map.getZoom() >= 15 ){
-                hardestHit.setStyle({'weight': 0.5});
                 councilCounts.setStyle({'fillOpacity': 0})
             } else {
-                hardestHit.setStyle({'weight': 0})
                 councilCounts.setStyle({'fillOpacity': 0.3})
             }
         }
     });
-    var info = L.control({position: 'bottomleft'});
-    info.onAdd = function(map){
-        this._div = L.DomUtil.create('div', 'council-info');
-        return this._div;
-    }
-    info.update = function(councilFeature){
-        if (typeof councilFeature !== 'undefined'){
-            var blob = '<h3>' + councilFeature.properties['COUNCIL_NU'] + '</h3>';
-            blob += '<p><strong>Hardest Hit properties: </strong>' + councilFeature.properties['COUNT'] + '</p>';
-            $(this._div).html(blob);
-        } else {
-            $(this._div).empty();
-            info.removeFrom(map);
-        }
-    }
+
     $.when($.getJSON('data/hardest_hit.geojson'), $.getJSON('data/council_counts.geojson')).then(
         function(hardest_hit, council_counts){
             councilCounts = L.geoJson(council_counts, {
@@ -41,13 +25,10 @@
                     layer.on('click', function(e){
                         map.setZoomAround(e.latlng, 16);
                     });
-                    layer.on('mouseover', function(e){
-                        info.addTo(map);
-                        info.update(feature);
-                    });
-                    layer.on('mouseout', function(e){
-                        info.update();
-                    })
+
+                    var label_text = '<h3>' + feature.properties['COUNCIL_NU'] + '</h3>';
+                    label_text += '<p><strong>Hardest Hit properties: </strong>' + feature.properties['COUNT'] + '</p>';
+                    layer.bindLabel(label_text);
                 }
             }).addTo(map);
             hardestHit = L.geoJson(hardest_hit, {
@@ -61,12 +42,12 @@
             "color": "#000",
             "opacity": 0.5,
             "weight": 1,
-            "fillOpacity": 0.3,
+            "fillOpacity": 0.5,
         }
-        if (feature.properties['COUNT'] < 90){
+        if (feature.properties['COUNT'] < 97){
             style['fillColor'] = "#a6dba0"
         }
-        if (feature.properties['COUNT'] > 90 && feature.properties['COUNT'] < 200){
+        if (feature.properties['COUNT'] > 97 && feature.properties['COUNT'] < 200){
             style['fillColor'] = "#5aae61";
         }
         if (feature.properties['COUNT'] > 200){
@@ -77,8 +58,8 @@
     function styleParcels(feature){
       // Style based upon ??
         var style = {
-          "color": "#000",
-          "weight": 0,
+          "color": "#54278f",
+          "weight": 1,
           "fillOpacity": 0.7,
           "fillColor": "#c2a5cf"
         }
