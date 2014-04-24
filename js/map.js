@@ -10,11 +10,11 @@
     map.on('zoomend', function(e){
         if (typeof hardestHit !== 'undefined'){
             if (map.getZoom() >= 14 ){
-                councilCounts.setStyle({'fillOpacity': 0})
-                hardestHit.setStyle({'fillOpacity': 0.7, 'weight': 1})
+                map.removeLayer(councilCounts)
+                map.addLayer(hardestHit)
             } else {
-                councilCounts.setStyle({'fillOpacity': 0.5})
-                hardestHit.setStyle({'fillOpacity': 0, 'weight': 0})
+                map.addLayer(councilCounts)
+                map.removeLayer(hardestHit)
             }
             var districtOutlineWeight = map.getZoom() * .4 - 3.8
             councilCounts.setStyle({'weight': districtOutlineWeight})
@@ -33,18 +33,41 @@
                     var label_text = '<h3>' + feature.properties['COUNCIL_NU'] + '</h3>';
                     label_text += '<p><strong>Hardest Hit properties: </strong>' + feature.properties['COUNT'] + '</p>';
                     layer.bindLabel(label_text);
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight
+                    });
                 }
             }).addTo(map);
+
+            //define hardestHit parcels but dont add to map
             hardestHit = L.geoJson(hardest_hit, {
                 style: styleParcels,
                 onEachFeature: parcelClick
-            }).addTo(map);
+            })
         }
     );
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 5
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+    }
+
+    function resetHighlight(e) {
+        councilCounts.resetStyle(e.target);
+    }
+
     function styleCouncils(feature){
         var style = {
-            "color": "#000",
-            "opacity": 0.5,
+            "color": "#333",
+            "opacity": 0.7,
             "weight": 1,
             "fillOpacity": 0.5,
         }
@@ -63,20 +86,20 @@
       // Style based upon ??
         var style = {
           "color": "#bd0026",
-          "weight": 0,
-          "fillOpacity": 0,
+          "weight": 1,
+          "fillOpacity": 0.7,
           "fillColor": "#f03b20"
         }
         return style;
     }
     function parcelClick(feature, layer){
         layer.on('click', function(e){
-            if(typeof lastClicked !== 'undefined'){
-                hardestHit.resetStyle(lastClicked);
+            if(lastClicked){
+                lastClicked.setStyle({'fillColor':"#f03b20"});
             }
             e.target.setStyle({'fillColor':"#ffffb2"});
             $('#info').html(parcelInfo(feature.properties));
-            map.fitBounds(e.target.getBounds());
+            map.setView(e.target.getBounds().getCenter(), 17);
             lastClicked = e.target;
         });
     }
