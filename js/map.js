@@ -9,11 +9,15 @@
     }).addTo(map);
     map.on('zoomend', function(e){
         if (typeof hardestHit !== 'undefined'){
-            if (map.getZoom() >= 15 ){
+            if (map.getZoom() >= 14 ){
                 councilCounts.setStyle({'fillOpacity': 0})
+                hardestHit.setStyle({'fillOpacity': 0.7, 'weight': 1})
             } else {
-                councilCounts.setStyle({'fillOpacity': 0.3})
+                councilCounts.setStyle({'fillOpacity': 0.5})
+                hardestHit.setStyle({'fillOpacity': 0, 'weight': 0})
             }
+            var districtOutlineWeight = map.getZoom() * .4 - 3.8
+            councilCounts.setStyle({'weight': districtOutlineWeight})
         }
     });
 
@@ -23,7 +27,7 @@
                 style: styleCouncils,
                 onEachFeature: function(feature, layer){
                     layer.on('click', function(e){
-                        map.setZoomAround(e.latlng, 16);
+                        map.setZoomAround(e.latlng, 15);
                     });
 
                     var label_text = '<h3>' + feature.properties['COUNCIL_NU'] + '</h3>';
@@ -45,23 +49,23 @@
             "fillOpacity": 0.5,
         }
         if (feature.properties['COUNT'] < 97){
-            style['fillColor'] = "#a6dba0"
+            style['fillColor'] = "#BDD7E7"
         }
-        if (feature.properties['COUNT'] > 97 && feature.properties['COUNT'] < 200){
-            style['fillColor'] = "#5aae61";
+        if (feature.properties['COUNT'] >= 97 && feature.properties['COUNT'] <= 200){
+            style['fillColor'] = "#6BAED6";
         }
         if (feature.properties['COUNT'] > 200){
-            style['fillColor'] = "#1b7837";
+            style['fillColor'] = "#08519C";
         }
         return style;
     }
     function styleParcels(feature){
       // Style based upon ??
         var style = {
-          "color": "#54278f",
-          "weight": 1,
-          "fillOpacity": 0.7,
-          "fillColor": "#c2a5cf"
+          "color": "#bd0026",
+          "weight": 0,
+          "fillOpacity": 0,
+          "fillColor": "#f03b20"
         }
         return style;
     }
@@ -70,7 +74,7 @@
             if(typeof lastClicked !== 'undefined'){
                 hardestHit.resetStyle(lastClicked);
             }
-            e.target.setStyle({'fillColor':"#762a83"});
+            e.target.setStyle({'fillColor':"#ffffb2"});
             $('#info').html(parcelInfo(feature.properties));
             map.fitBounds(e.target.getBounds());
             lastClicked = e.target;
