@@ -70,13 +70,13 @@
             "weight": 1,
             "fillOpacity": 0.5,
         }
-        if (feature.properties['COUNT'] < 97){
+        if (feature.properties['COUNT'] < 50){
             style['fillColor'] = "#BDD7E7"
         }
-        if (feature.properties['COUNT'] >= 97 && feature.properties['COUNT'] <= 200){
+        if (feature.properties['COUNT'] >= 50 && feature.properties['COUNT'] <= 80){
             style['fillColor'] = "#6BAED6";
         }
-        if (feature.properties['COUNT'] > 200){
+        if (feature.properties['COUNT'] > 80){
             style['fillColor'] = "#08519C";
         }
         return style;
