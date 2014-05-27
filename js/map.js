@@ -20,8 +20,7 @@
             councilCounts.setStyle({'weight': districtOutlineWeight})
         }
     });
-
-    $.when($.getJSON('data/hardest_hit.geojson'), $.getJSON('data/council_counts.geojson')).then(
+    $.when($.getJSON('data/hardest_hit_update.geojson'), $.getJSON('data/council_counts_update.geojson')).then(
         function(hardest_hit, council_counts){
             councilCounts = L.geoJson(council_counts, {
                 style: styleCouncils,
@@ -109,6 +108,7 @@
         blob += '<p><strong>Deeded Owner: </strong>' + properties['DEEDED_OWN'] + '</p>';
         blob += '<p><strong>Back Taxes: </strong>' + accounting.formatMoney(properties['BACK_TAXES']) + '</p>';
         blob += '<p><strong>Property Status: </strong>' + properties['PROPERTY_S'] + '</p>';
+        blob += '<p><strong>Proposed End Use: </strong>' + properties['END_USE'] + '</p>';
         blob += '<p><strong>Demolition Estimate: </strong>' + accounting.formatMoney(properties['CITY_ESTIM']) + '</p>';
         blob += '<p><strong>Neighborhood: </strong>' + properties['NEIGHBORHO'] + '</p>';
         blob += '<p><strong>Council District: </strong>' + properties[' COUNCIL_D'] + '</p>';
