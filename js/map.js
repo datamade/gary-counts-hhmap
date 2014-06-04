@@ -1,9 +1,11 @@
+var map;
 (function(){
     var hardestHit;
     var councilCounts;
     var lastClicked;
     var councolFeature;
-    var map = L.map('map').fitBounds([[41.5204,-87.4381],[41.6278,-87.2198]]);
+    
+    map = L.map('map').fitBounds([[41.51,-87.4381],[41.66,-87.2198]]);
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/derekeder.hehblhbj/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
