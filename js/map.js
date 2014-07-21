@@ -109,7 +109,6 @@ var map;
         blob += '<p><strong>PIN: </strong>' + properties['PIN'] + '</p>';
         blob += '<p><strong>Deeded Owner: </strong>' + properties['DEEDED_OWN'] + '</p>';
         blob += '<p><strong>Back Taxes: </strong>' + accounting.formatMoney(properties['BACK_TAXES']) + '</p>';
-        blob += '<p><strong>Property Status: </strong>' + properties['PROPERTY_S'] + '</p>';
         blob += '<p><strong>Proposed End Use: </strong>' + properties['END_USE'] + '</p>';
         blob += '<p><strong>Demolition Estimate: </strong>' + accounting.formatMoney(properties['CITY_ESTIM']) + '</p>';
         blob += '<p><strong>Neighborhood: </strong>' + properties['NEIGHBORHO'] + '</p>';
